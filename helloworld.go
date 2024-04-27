@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"net/http"
 	"os"
 	"strconv"
@@ -11,7 +12,7 @@ import (
 	"time"
 )
 
-const monitoringTimes = 5
+const monitoringTimes = 2
 const sleepTime = 2
 
 func main() {
@@ -21,9 +22,11 @@ func main() {
 		option := readOption()
 
 		if option == 1 {
+			fmt.Println("Monitorando sites...")
 			monitoringSites()
 		} else if option == 2 {
-			fmt.Println("Executando opção 2...")
+			fmt.Println("Exibindo Logs...")
+			printLogs()
 		} else if option == 0 {
 			fmt.Println("Programa Encerrado")
 			os.Exit(0)
@@ -48,7 +51,7 @@ func introduction() {
 func readOption() int {
 	var option int
 	fmt.Println("1 - Monitoramento")
-	fmt.Println("2 - opção 2")
+	fmt.Println("2 - Imprimir Logs")
 	fmt.Println("0 - Encerrar")
 	fmt.Scan(&option)
 	fmt.Println("Opção escolhida", option)
@@ -57,7 +60,6 @@ func readOption() int {
 }
 
 func monitoringSites() {
-	fmt.Println("Monitorando...")
 	// sites := []string{"https://www.alura.com.br/", "https://www.alura.com.br/2", "https://www.ig.com.br/"}
 	sites := readFile()
 
@@ -116,10 +118,21 @@ func recordLog(site string, status bool) {
 	file, err := os.OpenFile(filepath, os.O_CREATE|os.O_RDWR|os.O_APPEND, 0666)
 
 	if err != nil {
-		fmt.Println("Write error file", filepath)
+		fmt.Println("Erro ao tentar escrever o arquivo", filepath, "\n", err)
 	}
 
 	file.WriteString(time.Now().Format("02/01/2006 15:04:05") + "-" + site + "- online:" + strconv.FormatBool(status) + "\n")
 
 	file.Close()
+}
+
+func printLogs() {
+	filepath := "./data/log.txt"
+	file, err := ioutil.ReadFile(filepath)
+
+	if err != nil {
+		fmt.Println("Erro ao tentar abrir o arquivo", filepath, "\n", err)
+	}
+
+	fmt.Println(string(file))
 }
