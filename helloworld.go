@@ -6,6 +6,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -20,7 +21,7 @@ func main() {
 		option := readOption()
 
 		if option == 1 {
-			monitoring()
+			monitoringSites()
 		} else if option == 2 {
 			fmt.Println("Executando opção 2...")
 		} else if option == 0 {
@@ -55,7 +56,7 @@ func readOption() int {
 	return option
 }
 
-func monitoring() {
+func monitoringSites() {
 	fmt.Println("Monitorando...")
 	// sites := []string{"https://www.alura.com.br/", "https://www.alura.com.br/2", "https://www.ig.com.br/"}
 	sites := readFile()
@@ -79,8 +80,10 @@ func checkSite(site string) {
 
 	if status == 200 {
 		fmt.Println("Site funcionando normalmente")
+		recordLog(site, true)
 	} else {
 		fmt.Println("Erro de requisição no site ", site, "\nStatus Code Error:", status)
+		recordLog(site, false)
 	}
 }
 
@@ -106,4 +109,17 @@ func readFile() []string {
 	file.Close()
 
 	return sites
+}
+
+func recordLog(site string, status bool) {
+	filepath := "./data/log.txt"
+	file, err := os.OpenFile(filepath, os.O_CREATE|os.O_RDWR|os.O_APPEND, 0666)
+
+	if err != nil {
+		fmt.Println("Write error file", filepath)
+	}
+
+	file.WriteString(time.Now().Format("02/01/2006 15:04:05") + "-" + site + "- online:" + strconv.FormatBool(status) + "\n")
+
+	file.Close()
 }
