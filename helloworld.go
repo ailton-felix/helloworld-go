@@ -103,5 +103,7 @@ func readFile() []string {
 		}
 	}
 
+	file.Close()
+
 	return sites
 }
