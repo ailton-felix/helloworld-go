@@ -12,9 +12,16 @@ This is a simple website monitor developed in Go. It allows monitoring the statu
 
 1. **Code Compilation:**
    Make sure you have Go installed on your system. Compile the code with the following command:
+```    
+go build main.go
+```
 
 2. **Running the Program:**
 Run the compiled program:
+
+```
+./main
+```
 
 3. **Choose an Option:**
 The program will display a menu with the following options:
